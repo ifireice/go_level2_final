@@ -3,7 +3,7 @@ package mock
 import (
 	"strings"
 
-	model "github.com/ifireice/go_level2_final/cli/internal/model/filesystem"
+	model "github.com/alexgo92/go_level2_final/cli/internal/model/filesystem"
 )
 
 const FileSystemKind = "mock"
@@ -50,7 +50,7 @@ func (fs *FileSystem) ListFiles(dirPath string) (*model.FileStats, error) {
 	return &model.FileStats{List: list}, nil
 }
 
-func (fs *FileSystem) DeleteFile(dirPath, name string) error {
+func (fs *FileSystem) DeleteFile(dirPath, name string, SizeBytes int) error {
 	if strings.HasPrefix(dirPath, "/mock") {
 		dirPath = "/mock"
 	}
@@ -59,7 +59,7 @@ func (fs *FileSystem) DeleteFile(dirPath, name string) error {
 		return model.ErrDirNotFound{DirPath: dirPath}
 	}
 	for fileInd := range dir {
-		if dir[fileInd].Name == name {
+		if dir[fileInd].Name == name && dir[fileInd].SizeBytes == SizeBytes {
 			copy(dir[fileInd:], dir[fileInd+1:])
 			dir[len(dir)-1] = nil
 			dir = dir[:len(dir)-1]

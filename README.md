@@ -1,3 +1,25 @@
+# Что сделано:
+1. Дописан `-fs real` по аналогии с `mock`, что бы было однотипно.
+2. Дописать дефолтное поведение для `-fs` (так оно уже и так есть в данном коде:
+```var fsKind = flag.String("fs", "real", "file system: mock or real")``` только поменял с mock на real. 
+Или что-то другое подразумевалось?).
+3. Дубликаты - файлы с одинаковым именем, в тз немного другое под дубликатом понимается. 
+Добавил еще проверку на размер файлов, теперь дубликаты - файлы с одинаковым именем и размером.
+4. Программа компилируется (проверил)
+5. Программа выполняет функциональность, описанную в задании.
+6. Программа обладает флагом “-h/--help” для краткого объяснения функциональности. 
+Конечно обладает, это же автоматически формируется, правда в информации только расшифровка флага -fs.
+7. Программа должна уведомлять пользователя об ошибках, возникающих во время выполнения. 
+Выполнено, добавлена ошибка ErrFaildToDeleteFile если возникают проблемы с удалением "реального" файла (а не "виртуального" как в mock).
+8. Написать программу которая по случайному принципу генерирует копии уже имеющихся файлов, относительно указанной директории - сделал по другому. 
+Написал программу которая генерирует папки и файлы, которые могут дублироваться (находится generateDirFile/generate.go)
+9. Добавить тесты. Тест смог только 1 придумать на поиск дубликатов.
+
+# Что не сделалано:
+* При желании, распараллелить обход директорий
+* При желании, распараллелить удаление файлов
+* Сравнить производительность программы в однопоточном и многопоточном режимах
+
 # Скелет для финальной задачи
 Написан код для mock
 Запуск
@@ -7,49 +29,7 @@ Enter directory path:
 /mock
 
 Found files:
-
-1 File: test.mock
-  Size: 10 bytes
-  Directory: /mock
-  Content: Geekbrains
-
-2 File: test.mock
-  Size: 10 bytes
-  Directory: /mock/subdir
-  Content: Geekbrains
-
-3 File: test2.mock
-  Size: 17 bytes
-  Directory: /mock
-  Content: Go Course level 2
-
-Found duplicates:
-
-1 File: test.mock
-  Size: 10 bytes
-  Directory: /mock
-  Content: Geekbrains
-
-2 File: test.mock
-  Size: 10 bytes
-  Directory: /mock/subdir
-  Content: Geekbrains
-
-Which files you would like to delete (enter comma-separated list):
-1,2
-
-Deleting file [test.mock] from directory [/mock]...
-Deleted file [test.mock] from directory [/mock]
-Deleting file [test.mock] from directory [/mock/subdir]...
-Deleted file [test.mock] from directory [/mock/subdir]
-Successfuly deleted 2 duplicates
-
-Current directory file list:
-
-1 File: test2.mock
-  Size: 17 bytes
-  Directory: /mock
-  Content: Go Course level 2
+...
 ```
 
 Что бы запустить на реальной fs
@@ -64,8 +44,6 @@ $ go run cmd/cli/main.go  -fs real
 * Добавить тесты
 * При желании, распараллелить обход директорий
 * При желании, распараллелить удаление файлов
-
-
 
 ## Формулировка задачи
 В качестве завершающего задания нужно выполнить программу поиска дубликатов файлов.

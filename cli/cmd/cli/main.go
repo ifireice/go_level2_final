@@ -3,38 +3,37 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
+	"log"
 	"strconv"
 	"strings"
 
-	"github.com/ifireice/go_level2_final/cli/internal/filesystem"
+	"github.com/alexgo92/go_level2_final/cli/internal/filesystem"
 )
+
 // что бы работало с обычной fs нужно запустить c -fs real
-var fsKind = flag.String("fs", "mock", "file system")
+var fsKind = flag.String("fs", "real", "file system: mock or real")
 
 func main() {
 	flag.Parse()
-
-	fs, err := filesystem.NewFileSystem(*fsKind)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
 
 	fmt.Printf("Enter directory path:\n")
 
 	var directory string
 	fmt.Scanf("%s", &directory)
+
+	fs, err := filesystem.NewFileSystem(*fsKind, directory)
+	if err != nil {
+		log.Fatalf("%s", err)
+	}
+
 	// ListFiles - возвращает структуру FileStats - список файлов
 	// но у FileStats есть метод FindDuplicates, который тоже вернет список файлов-дубликатов
 	fileStats, err := fs.ListFiles(directory)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatalf("%s", err)
 	}
 
 	fmt.Printf("\nFound files:\n\n%s", fileStats)
-
 
 	duplicatesStats := fileStats.FindDuplicates()
 	if len(duplicatesStats.List) > 0 {
@@ -50,8 +49,9 @@ func main() {
 				fileInd, _ := strconv.Atoi(fileIndStr)
 				dirPath := duplicatesStats.List[fileInd-1].ParentDir
 				fileName := duplicatesStats.List[fileInd-1].Name
+				fileSize := duplicatesStats.List[fileInd-1].SizeBytes
 				fmt.Printf("Deleting file [%s] from directory [%s]...\n", fileName, dirPath)
-				err := fs.DeleteFile(dirPath, fileName)
+				err := fs.DeleteFile(dirPath, fileName, fileSize)
 				if err != nil {
 					fmt.Printf("Failed to delete file [%s] from directory [%s], error [%s], skipping...\n", fileName, dirPath, err)
 				} else {

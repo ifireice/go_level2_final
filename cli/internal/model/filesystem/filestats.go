@@ -36,16 +36,16 @@ func (fs *FileStats) String() string {
 	return buff.String()
 }
 
-// смотрит только на имена файлов надо допилить
+// смотрит только на имена файлов надо допилить - допилил
 func (fs *FileStats) FindDuplicates() *FileStats {
 	duplicatesFilter := make(map[string][]*File)
 	for _, file := range fs.List {
-		listByName, ok := duplicatesFilter[file.Name]
+		listByName, ok := duplicatesFilter[file.Name+" size: "+strconv.Itoa(file.SizeBytes)]
 		if !ok {
-			duplicatesFilter[file.Name] = []*File{file}
+			duplicatesFilter[file.Name+" size: "+strconv.Itoa(file.SizeBytes)] = []*File{file}
 		} else {
 			listByName = append(listByName, file)
-			duplicatesFilter[file.Name] = listByName
+			duplicatesFilter[file.Name+" size: "+strconv.Itoa(file.SizeBytes)] = listByName
 		}
 	}
 
